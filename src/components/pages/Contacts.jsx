@@ -60,46 +60,60 @@ const Contacts = () => {
     }
   };
 
-  const filteredAndSortedContacts = contacts
+const filteredAndSortedContacts = contacts
     .filter(contact => {
-      const matchesSearch = 
-        contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        contact.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        contact.email.toLowerCase().includes(searchTerm.toLowerCase());
+      const contactName = contact.Name || contact.name || "";
+      const contactCompany = contact.company_c || contact.company || "";
+      const contactEmail = contact.email_c || contact.email || "";
+      const contactType = contact.type_c || contact.type || "";
       
-      const matchesType = filterType === "all" || contact.type === filterType;
+      const matchesSearch = 
+        contactName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        contactCompany.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        contactEmail.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesType = filterType === "all" || contactType === filterType;
       
       return matchesSearch && matchesType;
     })
     .sort((a, b) => {
+      const aName = a.Name || a.name || "";
+      const bName = b.Name || b.name || "";
+      const aCompany = a.company_c || a.company || "";
+      const bCompany = b.company_c || b.company || "";
+      const aCreated = a.createdAt_c || a.createdAt || "";
+      const bCreated = b.createdAt_c || b.createdAt || "";
+      
       switch (sortBy) {
         case "name":
-          return a.name.localeCompare(b.name);
+          return aName.localeCompare(bName);
         case "company":
-          return a.company.localeCompare(b.company);
+          return aCompany.localeCompare(bCompany);
         case "created":
-          return new Date(b.createdAt) - new Date(a.createdAt);
+          return new Date(bCreated) - new Date(aCreated);
         default:
           return 0;
       }
     });
 
-  const getTypeColor = (type) => {
+const getTypeColor = (type) => {
+    const contactType = type || "lead";
     const colors = {
       lead: "warning",
       customer: "success",
       partner: "info"
     };
-    return colors[type] || "default";
+    return colors[contactType] || "default";
   };
 
   const getTypeIcon = (type) => {
+    const contactType = type || "lead";
     const icons = {
       lead: "Target",
       customer: "UserCheck",
       partner: "Handshake"
     };
-    return icons[type] || "User";
+    return icons[contactType] || "User";
   };
 
   if (loading) return <Loading type="table" />;
@@ -184,117 +198,133 @@ if (error) return <Error onRetry={loadContacts} />;
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredAndSortedContacts.map((contact, index) => (
-            <motion.div
-              key={contact.Id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <Card className="p-6 hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary-500">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center">
-                      <ApperIcon name={getTypeIcon(contact.type)} size={20} className="text-white" />
+{filteredAndSortedContacts.map((contact, index) => {
+            const contactName = contact.Name || contact.name || "Unnamed Contact";
+            const contactCompany = contact.company_c || contact.company || "";
+            const contactEmail = contact.email_c || contact.email || "";
+            const contactPhone = contact.phone_c || contact.phone || "";
+            const contactType = contact.type_c || contact.type || "lead";
+            const contactNotes = contact.notes_c || contact.notes || "";
+            const createdAt = contact.createdAt_c || contact.createdAt || contact.CreatedOn;
+            
+            return (
+              <motion.div
+                key={contact.Id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="p-6 hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary-500">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center">
+                        <ApperIcon name={getTypeIcon(contactType)} size={20} className="text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900">{contactName}</h3>
+                        <p className="text-gray-600">{contactCompany}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{contact.name}</h3>
-                      <p className="text-gray-600">{contact.company}</p>
+                    <Badge variant={getTypeColor(contactType)} size="sm">
+                      {contactType}
+                    </Badge>
+                  </div>
+
+                  <div className="space-y-2 mb-4">
+                    {contactEmail && (
+                      <div className="flex items-center space-x-2 text-sm text-gray-600">
+                        <ApperIcon name="Mail" size={16} />
+                        <span className="truncate">{contactEmail}</span>
+                      </div>
+                    )}
+                    {contactPhone && (
+                      <div className="flex items-center space-x-2 text-sm text-gray-600">
+                        <ApperIcon name="Phone" size={16} />
+                        <span>{contactPhone}</span>
+                      </div>
+                    )}
+                    <div className="flex items-center space-x-2 text-sm text-gray-500">
+                      <ApperIcon name="Calendar" size={16} />
+                      <span>Added {createdAt ? format(new Date(createdAt), "MMM dd, yyyy") : "Unknown"}</span>
                     </div>
                   </div>
-                  <Badge variant={getTypeColor(contact.type)} size="sm">
-                    {contact.type}
-                  </Badge>
-                </div>
 
-                <div className="space-y-2 mb-4">
-                  {contact.email && (
-                    <div className="flex items-center space-x-2 text-sm text-gray-600">
-                      <ApperIcon name="Mail" size={16} />
-                      <span className="truncate">{contact.email}</span>
+                  {contactNotes && (
+                    <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                      <p className="text-sm text-gray-700 line-clamp-2">{contactNotes}</p>
                     </div>
                   )}
-                  {contact.phone && (
-                    <div className="flex items-center space-x-2 text-sm text-gray-600">
-                      <ApperIcon name="Phone" size={16} />
-                      <span>{contact.phone}</span>
+
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/contacts/${contact.Id}`)}
+                      icon="Eye"
+                    >
+                      View Details
+                    </Button>
+                    
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => window.open(`mailto:${contactEmail}`, "_blank")}
+                        className="text-primary-600 hover:text-primary-700"
+                      >
+                        <ApperIcon name="Mail" size={16} />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => window.open(`tel:${contactPhone}`, "_blank")}
+                        className="text-secondary-600 hover:text-secondary-700"
+                      >
+                        <ApperIcon name="Phone" size={16} />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(contact.Id)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <ApperIcon name="Trash2" size={16} />
+                      </Button>
                     </div>
-                  )}
-                  <div className="flex items-center space-x-2 text-sm text-gray-500">
-                    <ApperIcon name="Calendar" size={16} />
-                    <span>Added {format(new Date(contact.createdAt), "MMM dd, yyyy")}</span>
                   </div>
-                </div>
-
-                {contact.notes && (
-                  <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                    <p className="text-sm text-gray-700 line-clamp-2">{contact.notes}</p>
-                  </div>
-                )}
-
-                <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate(`/contacts/${contact.Id}`)}
-                    icon="Eye"
-                  >
-                    View Details
-                  </Button>
-                  
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => window.open(`mailto:${contact.email}`, "_blank")}
-                      className="text-primary-600 hover:text-primary-700"
-                    >
-                      <ApperIcon name="Mail" size={16} />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => window.open(`tel:${contact.phone}`, "_blank")}
-                      className="text-secondary-600 hover:text-secondary-700"
-                    >
-                      <ApperIcon name="Phone" size={16} />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDelete(contact.Id)}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <ApperIcon name="Trash2" size={16} />
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            </motion.div>
-          ))}
+                </Card>
+              </motion.div>
+            );
+          })}
         </div>
       )}
 
       {/* Stats Summary */}
       <Card className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="text-center">
             <div className="text-3xl font-bold text-primary-600">{contacts.length}</div>
             <div className="text-sm text-gray-600">Total Contacts</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-warning">{contacts.filter(c => c.type === "lead").length}</div>
+            <div className="text-3xl font-bold text-warning">
+              {contacts.filter(c => (c.type_c || c.type) === "lead").length}
+            </div>
             <div className="text-sm text-gray-600">Leads</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-success">{contacts.filter(c => c.type === "customer").length}</div>
+            <div className="text-3xl font-bold text-success">
+              {contacts.filter(c => (c.type_c || c.type) === "customer").length}
+            </div>
             <div className="text-sm text-gray-600">Customers</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-info">{contacts.filter(c => c.type === "partner").length}</div>
+            <div className="text-3xl font-bold text-info">
+              {contacts.filter(c => (c.type_c || c.type) === "partner").length}
+            </div>
             <div className="text-sm text-gray-600">Partners</div>
           </div>
-</div>
+        </div>
       </Card>
     </div>
 

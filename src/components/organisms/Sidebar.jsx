@@ -65,7 +65,7 @@ const Sidebar = () => {
         ))}
       </nav>
 
-      {/* User Section */}
+{/* User Section */}
       <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700">
         <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-800/50">
           <div className="w-8 h-8 bg-gradient-to-r from-accent-500 to-accent-600 rounded-full flex items-center justify-center">
@@ -75,6 +75,19 @@ const Sidebar = () => {
             <p className="text-sm font-medium text-white">Sales Manager</p>
             <p className="text-xs text-gray-400">Active User</p>
           </div>
+          <button
+            onClick={() => {
+              if (window.confirm("Are you sure you want to logout?")) {
+                // Access the logout function from AuthContext
+                const { ApperUI } = window.ApperSDK;
+                ApperUI.logout();
+              }
+            }}
+            className="p-2 rounded-lg hover:bg-gray-700 transition-colors text-gray-400 hover:text-white"
+            title="Logout"
+          >
+            <ApperIcon name="LogOut" size={16} />
+          </button>
         </div>
       </div>
     </div>

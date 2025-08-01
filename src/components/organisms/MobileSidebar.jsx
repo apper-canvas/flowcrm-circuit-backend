@@ -51,7 +51,7 @@ const MobileSidebar = ({ isOpen, onClose }) => {
               </button>
             </div>
 
-            {/* Navigation */}
+{/* Navigation */}
             <nav className="p-4 space-y-2">
               {navigationItems.map((item) => (
                 <NavLink
@@ -70,6 +70,21 @@ const MobileSidebar = ({ isOpen, onClose }) => {
                   <span className="font-medium">{item.name}</span>
                 </NavLink>
               ))}
+              
+              {/* Logout Button */}
+              <button
+                onClick={() => {
+                  if (window.confirm("Are you sure you want to logout?")) {
+                    const { ApperUI } = window.ApperSDK;
+                    ApperUI.logout();
+                    onClose();
+                  }
+                }}
+                className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 text-gray-300 hover:text-white hover:bg-gray-800 w-full text-left"
+              >
+                <ApperIcon name="LogOut" size={20} />
+                <span className="font-medium">Logout</span>
+              </button>
             </nav>
           </motion.div>
         </>

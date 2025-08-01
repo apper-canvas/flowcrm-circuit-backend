@@ -53,47 +53,63 @@ const Dashboard = () => {
   if (loading) return <Loading />;
   if (error) return <Error onRetry={loadData} />;
 
-  const stats = {
+const stats = {
     totalContacts: data.contacts.length,
     totalDeals: data.deals.length,
-    pipelineValue: data.deals.reduce((sum, deal) => sum + (deal.value || 0), 0),
-    pendingActivities: data.activities.filter(activity => !activity.completed).length,
-    closedDeals: data.deals.filter(deal => deal.stage === "Closed Won").length,
-    conversionRate: data.deals.length > 0 ? Math.round((data.deals.filter(deal => deal.stage === "Closed Won").length / data.deals.length) * 100) : 0
+    pipelineValue: data.deals.reduce((sum, deal) => sum + (deal.value_c || deal.value || 0), 0),
+    pendingActivities: data.activities.filter(activity => {
+      const completed = activity.completed_c || activity.completed;
+      return completed !== "true" && completed !== true;
+    }).length,
+    closedDeals: data.deals.filter(deal => {
+      const stage = deal.stage_c || deal.stage;
+      return stage === "Closed Won";
+    }).length,
+    conversionRate: data.deals.length > 0 ? 
+      Math.round((data.deals.filter(deal => {
+        const stage = deal.stage_c || deal.stage;
+        return stage === "Closed Won";
+      }).length / data.deals.length) * 100) : 0
   };
 
   const recentActivities = data.activities
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .sort((a, b) => new Date(b.createdAt_c || b.createdAt) - new Date(a.createdAt_c || a.createdAt))
     .slice(0, 5);
-
-  const upcomingActivities = data.activities
-    .filter(activity => !activity.completed && activity.dueDate)
-    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+const upcomingActivities = data.activities
+    .filter(activity => {
+      const completed = activity.completed_c || activity.completed;
+      const dueDate = activity.dueDate_c || activity.dueDate;
+      return (completed !== "true" && completed !== true) && dueDate;
+    })
+    .sort((a, b) => new Date(a.dueDate_c || a.dueDate) - new Date(b.dueDate_c || b.dueDate))
     .slice(0, 5);
 
   const dealsByStage = data.deals.reduce((acc, deal) => {
-    acc[deal.stage] = (acc[deal.stage] || 0) + 1;
+    const stage = deal.stage_c || deal.stage || "Lead";
+    acc[stage] = (acc[stage] || 0) + 1;
     return acc;
   }, {});
 
-  const getActivityIcon = (type) => {
+const getActivityIcon = (type) => {
+    const activityType = type || "call";
     const icons = {
       call: "Phone",
       meeting: "Users",
       task: "CheckSquare",
       email: "Mail"
     };
-    return icons[type] || "Activity";
+    return icons[activityType] || "Activity";
   };
 
   const getActivityColor = (type) => {
+    const activityType = type || "call";
     const colors = {
       call: "primary",
       meeting: "secondary",
       task: "accent",
       email: "info"
     };
-    return colors[type] || "default";
+    return colors[activityType] || "default";
   };
 
   return (
@@ -273,36 +289,42 @@ const Dashboard = () => {
             </div>
             
             <div className="space-y-4">
-              {recentActivities.map((activity) => (
-                <div key={activity.Id} className="flex items-center space-x-3">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r ${
-                    getActivityColor(activity.type) === "primary" ? "from-primary-100 to-primary-200" :
-                    getActivityColor(activity.type) === "secondary" ? "from-secondary-100 to-secondary-200" :
-                    getActivityColor(activity.type) === "accent" ? "from-accent-100 to-accent-200" :
-                    "from-blue-100 to-blue-200"
-                  }`}>
-                    <ApperIcon 
-                      name={getActivityIcon(activity.type)} 
-                      size={16} 
-                      className={`${
-                        getActivityColor(activity.type) === "primary" ? "text-primary-600" :
-                        getActivityColor(activity.type) === "secondary" ? "text-secondary-600" :
-                        getActivityColor(activity.type) === "accent" ? "text-accent-600" :
-                        "text-blue-600"
-                      }`} 
-                    />
+{recentActivities.map((activity) => {
+                const activityType = activity.type_c || activity.type || "call";
+                const activityTitle = activity.title_c || activity.Name || activity.title || "Untitled Activity";
+                const createdAt = activity.createdAt_c || activity.createdAt;
+                
+                return (
+                  <div key={activity.Id} className="flex items-center space-x-3">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r ${
+                      getActivityColor(activityType) === "primary" ? "from-primary-100 to-primary-200" :
+                      getActivityColor(activityType) === "secondary" ? "from-secondary-100 to-secondary-200" :
+                      getActivityColor(activityType) === "accent" ? "from-accent-100 to-accent-200" :
+                      "from-blue-100 to-blue-200"
+                    }`}>
+                      <ApperIcon 
+                        name={getActivityIcon(activityType)} 
+                        size={16} 
+                        className={`${
+                          getActivityColor(activityType) === "primary" ? "text-primary-600" :
+                          getActivityColor(activityType) === "secondary" ? "text-secondary-600" :
+                          getActivityColor(activityType) === "accent" ? "text-accent-600" :
+                          "text-blue-600"
+                        }`} 
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">{activityTitle}</p>
+                      <p className="text-xs text-gray-500">
+                        {format(new Date(createdAt), "MMM dd, h:mm a")}
+                      </p>
+                    </div>
+                    <Badge variant={getActivityColor(activityType)} size="sm">
+                      {activityType}
+                    </Badge>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{activity.title}</p>
-                    <p className="text-xs text-gray-500">
-                      {format(new Date(activity.createdAt), "MMM dd, h:mm a")}
-                    </p>
-                  </div>
-                  <Badge variant={getActivityColor(activity.type)} size="sm">
-                    {activity.type}
-                  </Badge>
-                </div>
-              ))}
+                );
+              })}
               {recentActivities.length === 0 && (
                 <p className="text-gray-500 text-center py-4">No recent activities</p>
               )}
@@ -326,39 +348,45 @@ const Dashboard = () => {
             </div>
             
             <div className="space-y-4">
-              {upcomingActivities.map((activity) => (
-                <div key={activity.Id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r ${
-                    getActivityColor(activity.type) === "primary" ? "from-primary-100 to-primary-200" :
-                    getActivityColor(activity.type) === "secondary" ? "from-secondary-100 to-secondary-200" :
-                    getActivityColor(activity.type) === "accent" ? "from-accent-100 to-accent-200" :
-                    "from-blue-100 to-blue-200"
-                  }`}>
-                    <ApperIcon 
-                      name={getActivityIcon(activity.type)} 
-                      size={16} 
-                      className={`${
-                        getActivityColor(activity.type) === "primary" ? "text-primary-600" :
-                        getActivityColor(activity.type) === "secondary" ? "text-secondary-600" :
-                        getActivityColor(activity.type) === "accent" ? "text-accent-600" :
-                        "text-blue-600"
-                      }`} 
-                    />
+{upcomingActivities.map((activity) => {
+                const activityType = activity.type_c || activity.type || "call";
+                const activityTitle = activity.title_c || activity.Name || activity.title || "Untitled Activity";
+                const dueDate = activity.dueDate_c || activity.dueDate;
+                
+                return (
+                  <div key={activity.Id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r ${
+                      getActivityColor(activityType) === "primary" ? "from-primary-100 to-primary-200" :
+                      getActivityColor(activityType) === "secondary" ? "from-secondary-100 to-secondary-200" :
+                      getActivityColor(activityType) === "accent" ? "from-accent-100 to-accent-200" :
+                      "from-blue-100 to-blue-200"
+                    }`}>
+                      <ApperIcon 
+                        name={getActivityIcon(activityType)} 
+                        size={16} 
+                        className={`${
+                          getActivityColor(activityType) === "primary" ? "text-primary-600" :
+                          getActivityColor(activityType) === "secondary" ? "text-secondary-600" :
+                          getActivityColor(activityType) === "accent" ? "text-accent-600" :
+                          "text-blue-600"
+                        }`} 
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">{activityTitle}</p>
+                      <p className="text-xs text-gray-500">
+                        Due: {format(new Date(dueDate), "MMM dd, h:mm a")}
+                      </p>
+                    </div>
+                    <Badge 
+                      variant={new Date(dueDate) < new Date() ? "error" : "warning"} 
+                      size="sm"
+                    >
+                      {new Date(dueDate) < new Date() ? "Overdue" : "Pending"}
+                    </Badge>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{activity.title}</p>
-                    <p className="text-xs text-gray-500">
-                      Due: {format(new Date(activity.dueDate), "MMM dd, h:mm a")}
-                    </p>
-                  </div>
-                  <Badge 
-                    variant={new Date(activity.dueDate) < new Date() ? "error" : "warning"} 
-                    size="sm"
-                  >
-                    {new Date(activity.dueDate) < new Date() ? "Overdue" : "Pending"}
-                  </Badge>
-                </div>
-              ))}
+                );
+              })}
               {upcomingActivities.length === 0 && (
                 <p className="text-gray-500 text-center py-4">No upcoming activities</p>
               )}
