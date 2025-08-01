@@ -91,9 +91,8 @@ const QuickAddModal = ({ isOpen, onClose }) => {
         toast.success("Activity created successfully!");
       }
       
-      resetForms();
+resetForms();
       onClose();
-onClose();
       
       // Trigger page refresh by dispatching a custom event
       window.dispatchEvent(new window.CustomEvent("dataUpdated"));
