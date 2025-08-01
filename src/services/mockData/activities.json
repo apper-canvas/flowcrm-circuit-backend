@@ -1,0 +1,122 @@
+[
+  {
+    "Id": 1,
+    "type": "call",
+    "contactId": "1",
+    "dealId": "1",
+    "title": "Follow-up call with Sarah Johnson",
+    "description": "Discuss pricing proposal and address technical questions about enterprise features.",
+    "dueDate": "2024-01-30T14:00:00Z",
+    "completed": false,
+    "outcome": null,
+    "createdAt": "2024-01-23T10:30:00Z"
+  },
+  {
+    "Id": 2,
+    "type": "meeting",
+    "contactId": "2",
+    "dealId": "2",
+    "title": "Premium features demo for Digital Solutions",
+    "description": "Demonstrate new premium features and discuss upgrade path for existing customer.",
+    "dueDate": "2024-01-31T15:30:00Z",
+    "completed": true,
+    "outcome": "Customer interested in advanced reporting features. Preparing custom quote.",
+    "createdAt": "2024-01-20T09:15:00Z"
+  },
+  {
+    "Id": 3,
+    "type": "task",
+    "contactId": "3",
+    "dealId": "3",
+    "title": "Prepare API documentation for Growth Marketing",
+    "description": "Create detailed API documentation and integration examples for technical review.",
+    "dueDate": "2024-02-02T17:00:00Z",
+    "completed": false,
+    "outcome": null,
+    "createdAt": "2024-01-24T16:20:00Z"
+  },
+  {
+    "Id": 4,
+    "type": "email",
+    "contactId": "4",
+    "dealId": "4",
+    "title": "Send contract proposal to Enterprise Corp",
+    "description": "Forward final contract proposal with negotiated terms to legal team for review.",
+    "dueDate": "2024-01-29T10:00:00Z",
+    "completed": true,
+    "outcome": "Proposal sent to legal team. Awaiting feedback on terms and conditions.",
+    "createdAt": "2024-01-26T13:45:00Z"
+  },
+  {
+    "Id": 5,
+    "type": "call",
+    "contactId": "5",
+    "dealId": "5",
+    "title": "Implementation planning call with Retail Solutions",
+    "description": "Plan implementation timeline for new locations and coordinate with technical team.",
+    "dueDate": "2024-02-01T11:00:00Z",
+    "completed": false,
+    "outcome": null,
+    "createdAt": "2024-01-28T08:00:00Z"
+  },
+  {
+    "Id": 6,
+    "type": "meeting",
+    "contactId": "6",
+    "dealId": "6",
+    "title": "Technical discovery session with Innovation Labs",
+    "description": "Deep dive into technical requirements and integration possibilities.",
+    "dueDate": "2024-02-05T14:00:00Z",
+    "completed": false,
+    "outcome": null,
+    "createdAt": "2024-01-25T12:15:00Z"
+  },
+  {
+    "Id": 7,
+    "type": "task",
+    "contactId": "7",
+    "dealId": "8",
+    "title": "Draft partnership agreement with Consulting Group",
+    "description": "Create initial partnership agreement draft including revenue sharing terms.",
+    "dueDate": "2024-01-30T16:00:00Z",
+    "completed": false,
+    "outcome": null,
+    "createdAt": "2024-01-24T14:00:00Z"
+  },
+  {
+    "Id": 8,
+    "type": "call",
+    "contactId": "8",
+    "dealId": "7",
+    "title": "Customer success check-in with Local Business",
+    "description": "Quarterly check-in to ensure customer satisfaction and identify growth opportunities.",
+    "dueDate": "2024-02-03T13:00:00Z",
+    "completed": false,
+    "outcome": null,
+    "createdAt": "2024-01-22T11:30:00Z"
+  },
+  {
+    "Id": 9,
+    "type": "email",
+    "contactId": "1",
+    "dealId": "1",
+    "title": "Send implementation timeline to TechStart",
+    "description": "Provide detailed project timeline and milestone schedule for enterprise implementation.",
+    "dueDate": "2024-01-28T09:00:00Z",
+    "completed": true,
+    "outcome": "Timeline approved by customer. Project kickoff scheduled for February 1st.",
+    "createdAt": "2024-01-25T10:30:00Z"
+  },
+  {
+    "Id": 10,
+    "type": "task",
+    "contactId": "2",
+    "dealId": "2",
+    "title": "Prepare custom reporting demo",
+    "description": "Set up demo environment with sample data to showcase advanced reporting capabilities.",
+    "dueDate": "2024-01-29T12:00:00Z",
+    "completed": false,
+    "outcome": null,
+    "createdAt": "2024-01-26T15:20:00Z"
+  }
+]

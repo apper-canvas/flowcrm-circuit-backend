@@ -1,0 +1,90 @@
+[
+  {
+    "Id": 1,
+    "title": "TechStart Enterprise CRM Implementation",
+    "contactId": "1",
+    "value": 45000,
+    "stage": "Proposal",
+    "expectedCloseDate": "2024-02-15T00:00:00Z",
+    "notes": "Comprehensive CRM solution for 50+ users. Includes custom integrations and training. High priority deal.",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-23T14:20:00Z"
+  },
+  {
+    "Id": 2,
+    "title": "Digital Solutions Premium Upgrade",
+    "contactId": "2",
+    "value": 12000,
+    "stage": "Negotiation",
+    "expectedCloseDate": "2024-02-28T00:00:00Z",
+    "notes": "Existing customer upgrade to premium features. Annual contract renewal with additional modules.",
+    "createdAt": "2024-01-10T09:15:00Z",
+    "updatedAt": "2024-01-25T11:45:00Z"
+  },
+  {
+    "Id": 3,
+    "title": "Growth Marketing API Integration",
+    "contactId": "3",
+    "value": 8500,
+    "stage": "Qualified",
+    "expectedCloseDate": "2024-03-10T00:00:00Z",
+    "notes": "Custom API integration project. Need to schedule technical demo and provide detailed documentation.",
+    "createdAt": "2024-01-22T16:20:00Z",
+    "updatedAt": "2024-01-24T10:30:00Z"
+  },
+  {
+    "Id": 4,
+    "title": "Enterprise Corp Multi-Location Rollout",
+    "contactId": "4",
+    "value": 120000,
+    "stage": "Negotiation",
+    "expectedCloseDate": "2024-03-31T00:00:00Z",
+    "notes": "Large enterprise deal for 15 locations. Partnership opportunity. Requires executive approval.",
+    "createdAt": "2024-01-05T13:45:00Z",
+    "updatedAt": "2024-01-26T15:10:00Z"
+  },
+  {
+    "Id": 5,
+    "title": "Retail Solutions Expansion Package",
+    "contactId": "5",
+    "value": 25000,
+    "stage": "Closed Won",
+    "expectedCloseDate": "2024-01-31T00:00:00Z",
+    "notes": "Successfully closed expansion deal. Customer adding 3 new locations. Implementation starts February.",
+    "createdAt": "2023-12-15T08:00:00Z",
+    "updatedAt": "2024-01-28T12:00:00Z"
+  },
+  {
+    "Id": 6,
+    "title": "Innovation Labs Custom Development",
+    "contactId": "6",
+    "value": 35000,
+    "stage": "Lead",
+    "expectedCloseDate": "2024-04-15T00:00:00Z",
+    "notes": "Research company needs custom development work. Still in early discovery phase. High technical requirements.",
+    "createdAt": "2024-01-25T12:15:00Z",
+    "updatedAt": "2024-01-25T12:15:00Z"
+  },
+  {
+    "Id": 7,
+    "title": "Local Business Basic Plan",
+    "contactId": "8",
+    "value": 2400,
+    "stage": "Closed Won",
+    "expectedCloseDate": "2024-01-15T00:00:00Z",
+    "notes": "Small business annual subscription. Price-sensitive customer but good long-term potential.",
+    "createdAt": "2024-01-08T11:30:00Z",
+    "updatedAt": "2024-01-15T09:20:00Z"
+  },
+  {
+    "Id": 8,
+    "title": "Consulting Group Partnership Deal",
+    "contactId": "7",
+    "value": 15000,
+    "stage": "Proposal",
+    "expectedCloseDate": "2024-02-20T00:00:00Z",
+    "notes": "Partnership agreement for implementation services. Revenue sharing model. Legal review in progress.",
+    "createdAt": "2024-01-12T14:00:00Z",
+    "updatedAt": "2024-01-24T16:30:00Z"
+  }
+]
