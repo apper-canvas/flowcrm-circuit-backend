@@ -12,6 +12,7 @@ import Select from "@/components/atoms/Select";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
+import QuickAddModal from "@/components/organisms/QuickAddModal";
 import contactService from "@/services/api/contactService";
 
 const Contacts = () => {
@@ -22,7 +23,7 @@ const Contacts = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [sortBy, setSortBy] = useState("name");
-
+  const [showQuickAdd, setShowQuickAdd] = useState(false);
   const loadContacts = async () => {
     try {
       setError(null);
@@ -102,21 +103,32 @@ const Contacts = () => {
   };
 
   if (loading) return <Loading type="table" />;
-  if (error) return <Error onRetry={loadContacts} />;
+if (error) return <Error onRetry={loadContacts} />;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-            Contacts
-          </h1>
-          <p className="text-gray-600 mt-1">
-            Manage your customers, leads, and business partners
-          </p>
+    <>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              Contacts
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Manage your customers, leads, and business partners
+            </p>
+          </div>
+          <div className="mt-4 sm:mt-0">
+            <Button
+              variant="primary"
+              onClick={() => setShowQuickAdd(true)}
+              icon="UserPlus"
+              className="w-full sm:w-auto"
+            >
+              Add Contact
+            </Button>
+          </div>
         </div>
-      </div>
 
       {/* Filters and Search */}
       <Card className="p-6">
@@ -282,9 +294,16 @@ const Contacts = () => {
             <div className="text-3xl font-bold text-info">{contacts.filter(c => c.type === "partner").length}</div>
             <div className="text-sm text-gray-600">Partners</div>
           </div>
-        </div>
+</div>
       </Card>
     </div>
+
+    {/* Quick Add Modal */}
+    <QuickAddModal 
+      isOpen={showQuickAdd} 
+      onClose={() => setShowQuickAdd(false)} 
+    />
+  </>
   );
 };
 
