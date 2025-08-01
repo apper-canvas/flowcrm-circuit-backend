@@ -243,6 +243,82 @@ engagementLevel_c: contactData.engagementLevel_c || contactData.engagementLevel,
       return null;
     }
   }
+// Bulk update contacts (only updateable fields)
+  async bulkUpdate(contactIds, updateData) {
+    try {
+      // Prepare records array with only updateable fields
+      const records = contactIds.map(id => {
+        const record = { Id: parseInt(id) };
+        
+        // Only include updateable fields that are provided
+        if (updateData.Name !== undefined) record.Name = updateData.Name;
+        if (updateData.Tags !== undefined) record.Tags = updateData.Tags;
+        if (updateData.Owner !== undefined) record.Owner = updateData.Owner;
+        if (updateData.company_c !== undefined) record.company_c = updateData.company_c;
+        if (updateData.email_c !== undefined) record.email_c = updateData.email_c;
+        if (updateData.phone_c !== undefined) record.phone_c = updateData.phone_c;
+        if (updateData.address_c !== undefined) record.address_c = updateData.address_c;
+        if (updateData.type_c !== undefined) record.type_c = updateData.type_c;
+        if (updateData.industry_c !== undefined) record.industry_c = updateData.industry_c;
+        if (updateData.companySize_c !== undefined) record.companySize_c = updateData.companySize_c;
+        if (updateData.engagementLevel_c !== undefined) record.engagementLevel_c = updateData.engagementLevel_c;
+        if (updateData.leadScore_c !== undefined) record.leadScore_c = parseFloat(updateData.leadScore_c) || 0;
+        if (updateData.notes_c !== undefined) record.notes_c = updateData.notes_c;
+        
+        // Always update the modification timestamp
+        record.updatedAt_c = new Date().toISOString();
+        
+        return record;
+      });
+
+      const params = { records };
+
+      const response = await this.apperClient.updateRecord(this.tableName, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return { success: false, message: response.message };
+      }
+
+      if (response.results) {
+        const successfulUpdates = response.results.filter(result => result.success);
+        const failedUpdates = response.results.filter(result => !result.success);
+        
+        if (failedUpdates.length > 0) {
+          console.error(`Failed to update contacts ${failedUpdates.length} records:${JSON.stringify(failedUpdates)}`);
+          
+          failedUpdates.forEach(record => {
+            record.errors?.forEach(error => {
+              toast.error(`${error.fieldLabel}: ${error.message}`);
+            });
+            if (record.message) toast.error(record.message);
+          });
+        }
+        
+        if (successfulUpdates.length > 0) {
+          toast.success(`${successfulUpdates.length} contacts updated successfully`);
+          return { 
+            success: true, 
+            updatedCount: successfulUpdates.length,
+            failedCount: failedUpdates.length,
+            data: successfulUpdates.map(result => result.data)
+          };
+        }
+      }
+      
+      return { success: false, message: "No records were updated" };
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error bulk updating contacts:", error?.response?.data?.message);
+        toast.error(error?.response?.data?.message);
+      } else {
+        console.error("Error bulk updating contacts:", error.message);
+        toast.error("Failed to update contacts");
+      }
+      return { success: false, error: error.message };
+    }
+  }
 
   // Delete contact
   async delete(id) {

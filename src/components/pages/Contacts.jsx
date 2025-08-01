@@ -1,29 +1,32 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
+import BulkEditModal from "@/components/organisms/BulkEditModal";
+import contactService from "@/services/api/contactService";
 import ApperIcon from "@/components/ApperIcon";
-import Card from "@/components/atoms/Card";
-import Button from "@/components/atoms/Button";
-import Badge from "@/components/atoms/Badge";
-import Input from "@/components/atoms/Input";
-import Select from "@/components/atoms/Select";
+import QuickAddModal from "@/components/organisms/QuickAddModal";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
-import QuickAddModal from "@/components/organisms/QuickAddModal";
-import contactService from "@/services/api/contactService";
-
+import Badge from "@/components/atoms/Badge";
+import Input from "@/components/atoms/Input";
+import Button from "@/components/atoms/Button";
+import Select from "@/components/atoms/Select";
+import Card from "@/components/atoms/Card";
 const Contacts = () => {
   const navigate = useNavigate();
-  const [contacts, setContacts] = useState([]);
+const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [sortBy, setSortBy] = useState("name");
   const [showQuickAdd, setShowQuickAdd] = useState(false);
+  const [selectedContacts, setSelectedContacts] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
+  const [showBulkEdit, setShowBulkEdit] = useState(false);
   const loadContacts = async () => {
     try {
       setError(null);
@@ -59,7 +62,38 @@ const Contacts = () => {
       }
     }
   };
+// Bulk selection handlers
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedContacts([]);
+      setSelectAll(false);
+    } else {
+      setSelectedContacts(filteredAndSortedContacts.map(contact => contact.Id));
+      setSelectAll(true);
+    }
+  };
 
+  const handleSelectContact = (contactId) => {
+    setSelectedContacts(prev => {
+      const isSelected = prev.includes(contactId);
+      const newSelection = isSelected
+        ? prev.filter(id => id !== contactId)
+        : [...prev, contactId];
+      setSelectAll(newSelection.length === filteredAndSortedContacts.length);
+      return newSelection;
+    });
+  };
+
+  const handleBulkEdit = () => {
+    setShowBulkEdit(true);
+  };
+
+  const handleBulkUpdateComplete = () => {
+    setSelectedContacts([]);
+    setSelectAll(false);
+    setShowBulkEdit(false);
+    loadContacts(); // Refresh the contact list
+  };
 const filteredAndSortedContacts = contacts
     .filter(contact => {
       const contactName = contact.Name || contact.name || "";
@@ -132,7 +166,32 @@ if (error) return <Error onRetry={loadContacts} />;
               Manage your customers, leads, and business partners
             </p>
           </div>
-          <div className="mt-4 sm:mt-0">
+<div className="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3">
+            {selectedContacts.length > 0 && (
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-gray-600">
+                  {selectedContacts.length} selected
+                </span>
+                <Button
+                  variant="secondary"
+                  onClick={handleBulkEdit}
+                  icon="Edit"
+                  className="w-full sm:w-auto"
+                >
+                  Bulk Edit
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setSelectedContacts([]);
+                    setSelectAll(false);
+                  }}
+                  className="text-sm"
+                >
+                  Clear
+                </Button>
+              </div>
+            )}
             <Button
               variant="primary"
               onClick={() => setShowQuickAdd(true)}
@@ -198,7 +257,24 @@ if (error) return <Error onRetry={loadContacts} />;
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-{filteredAndSortedContacts.map((contact, index) => {
+{/* Select All Checkbox */}
+          {filteredAndSortedContacts.length > 0 && (
+            <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+              <label className="flex items-center space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={selectAll}
+                  onChange={handleSelectAll}
+                  className="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500 focus:ring-2"
+                />
+                <span className="text-sm font-medium text-gray-700">
+                  Select all contacts ({filteredAndSortedContacts.length})
+                </span>
+              </label>
+            </div>
+          )}
+
+          {filteredAndSortedContacts.map((contact, index) => {
             const contactName = contact.Name || contact.name || "Unnamed Contact";
             const contactCompany = contact.company_c || contact.company || "";
             const contactEmail = contact.email_c || contact.email || "";
@@ -206,6 +282,7 @@ if (error) return <Error onRetry={loadContacts} />;
             const contactType = contact.type_c || contact.type || "lead";
             const contactNotes = contact.notes_c || contact.notes || "";
             const createdAt = contact.createdAt_c || contact.createdAt || contact.CreatedOn;
+            const isSelected = selectedContacts.includes(contact.Id);
             
             return (
               <motion.div
@@ -214,9 +291,18 @@ if (error) return <Error onRetry={loadContacts} />;
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="p-6 hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary-500">
+                <Card className={`p-6 hover:shadow-lg transition-all duration-200 border-l-4 ${
+                  isSelected ? 'border-l-primary-600 bg-primary-50' : 'border-l-primary-500'
+                }`}>
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => handleSelectContact(contact.Id)}
+                        className="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500 focus:ring-2"
+                      />
+                      <div className="flex items-center space-x-3">
                       <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center">
                         <ApperIcon name={getTypeIcon(contactType)} size={20} className="text-white" />
                       </div>
@@ -294,10 +380,11 @@ if (error) return <Error onRetry={loadContacts} />;
                   </div>
                 </Card>
               </motion.div>
-            );
+);
           })}
         </div>
       )}
+      </div>
 
       {/* Stats Summary */}
       <Card className="p-6">
@@ -328,10 +415,19 @@ if (error) return <Error onRetry={loadContacts} />;
       </Card>
     </div>
 
-    {/* Quick Add Modal */}
+{/* Quick Add Modal */}
     <QuickAddModal 
       isOpen={showQuickAdd} 
       onClose={() => setShowQuickAdd(false)} 
+    />
+
+    {/* Bulk Edit Modal */}
+    <BulkEditModal
+      isOpen={showBulkEdit}
+      onClose={() => setShowBulkEdit(false)}
+      selectedRecords={selectedContacts}
+      recordType="contact"
+      onUpdateComplete={handleBulkUpdateComplete}
     />
   </>
   );
