@@ -1,24 +1,25 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
+import contactService from "@/services/api/contactService";
+import dealService from "@/services/api/dealService";
 import ApperIcon from "@/components/ApperIcon";
-import Card from "@/components/atoms/Card";
-import Button from "@/components/atoms/Button";
-import Badge from "@/components/atoms/Badge";
+import QuickAddModal from "@/components/organisms/QuickAddModal";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
-import dealService from "@/services/api/dealService";
-import contactService from "@/services/api/contactService";
+import Badge from "@/components/atoms/Badge";
+import Button from "@/components/atoms/Button";
+import Card from "@/components/atoms/Card";
 
 const Pipeline = () => {
-  const [deals, setDeals] = useState([]);
+const [deals, setDeals] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [draggedDeal, setDraggedDeal] = useState(null);
-
+  const [showAddModal, setShowAddModal] = useState(false);
   const stages = [
     { name: "Lead", color: "bg-yellow-100 border-yellow-300", textColor: "text-yellow-800" },
     { name: "Qualified", color: "bg-blue-100 border-blue-300", textColor: "text-blue-800" },
@@ -114,7 +115,7 @@ const Pipeline = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
             Sales Pipeline
@@ -122,6 +123,15 @@ const Pipeline = () => {
           <p className="text-gray-600 mt-1">
             Track and manage your deals through the sales process
           </p>
+        </div>
+        <div className="mt-4 sm:mt-0">
+          <Button
+            onClick={() => setShowAddModal(true)}
+            className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+          >
+            <ApperIcon name="Plus" size={16} className="mr-2" />
+            Add New Deal
+          </Button>
         </div>
       </div>
 
@@ -346,8 +356,19 @@ const Pipeline = () => {
               );
             })}
           </div>
-        </Card>
+</Card>
       </div>
+
+      {/* Add Deal Modal */}
+      <QuickAddModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        type="deal"
+        onSuccess={() => {
+          setShowAddModal(false);
+          loadData(); // Refresh the pipeline data
+        }}
+      />
     </div>
   );
 };
