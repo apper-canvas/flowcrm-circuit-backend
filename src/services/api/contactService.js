@@ -61,7 +61,58 @@ class ContactService {
       throw new Error("Contact not found");
     }
     
-    this.contacts.splice(index, 1);
+this.contacts.splice(index, 1);
+    return true;
+  }
+
+  calculateLeadScore(contact, scoringConfig) {
+    if (!scoringConfig || !scoringConfig.enabled) {
+      return 0;
+    }
+
+    const { criteria, weights } = scoringConfig;
+    let totalScore = 0;
+
+    // Company size scoring
+    const companySize = contact.companySize || 'other';
+    const companySizeScore = criteria.companySize[companySize] || 0;
+    totalScore += companySizeScore * weights.companySize;
+
+    // Contact type scoring
+    const contactType = contact.type || 'lead';
+    const contactTypeScore = criteria.contactType[contactType] || 0;
+    totalScore += contactTypeScore * weights.contactType;
+
+    // Industry scoring
+    const industry = contact.industry || 'other';
+    const industryScore = criteria.industry[industry] || criteria.industry.other;
+    totalScore += industryScore * weights.industry;
+
+    // Engagement level scoring
+    const engagementLevel = contact.engagementLevel || 'low';
+    const engagementScore = criteria.engagementLevel[engagementLevel] || 0;
+    totalScore += engagementScore * weights.engagementLevel;
+
+    return Math.round(totalScore);
+  }
+
+  async updateContactScore(id, scoringConfig) {
+    const contact = await this.getById(id);
+    const leadScore = this.calculateLeadScore(contact, scoringConfig);
+    return await this.update(id, { leadScore });
+  }
+
+  async recalculateAllScores(scoringConfig) {
+    await this.delay();
+    for (let i = 0; i < this.contacts.length; i++) {
+      const contact = this.contacts[i];
+      const leadScore = this.calculateLeadScore(contact, scoringConfig);
+      this.contacts[i] = {
+        ...contact,
+        leadScore,
+        updatedAt: new Date().toISOString()
+      };
+    }
     return true;
   }
 }

@@ -1,16 +1,18 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
+import contactService from "@/services/api/contactService";
 import ApperIcon from "@/components/ApperIcon";
-import Card from "@/components/atoms/Card";
-import Button from "@/components/atoms/Button";
-import Input from "@/components/atoms/Input";
-import Select from "@/components/atoms/Select";
+import Pipeline from "@/components/pages/Pipeline";
 import Textarea from "@/components/atoms/Textarea";
+import Input from "@/components/atoms/Input";
+import Button from "@/components/atoms/Button";
+import Select from "@/components/atoms/Select";
+import Card from "@/components/atoms/Card";
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState("profile");
-  const [settings, setSettings] = useState({
+const [settings, setSettings] = useState({
     profile: {
       name: "Sales Manager",
       email: "sales@company.com",
@@ -41,14 +43,51 @@ const Settings = () => {
       dateFormat: "MM/DD/YYYY",
       currency: "USD",
       timezone: "America/New_York"
+    },
+    leadScoring: {
+      enabled: true,
+      criteria: {
+        companySize: {
+          startup: 10,
+          small: 25,
+          medium: 50,
+          large: 75,
+          enterprise: 100
+        },
+        contactType: {
+          lead: 20,
+          customer: 50,
+          partner: 30
+        },
+        industry: {
+          technology: 80,
+          healthcare: 70,
+          finance: 85,
+          retail: 60,
+          manufacturing: 65,
+          education: 55,
+          other: 40
+        },
+        engagementLevel: {
+          high: 40,
+          medium: 25,
+          low: 10
+        }
+      },
+      weights: {
+        companySize: 0.3,
+        contactType: 0.2,
+        industry: 0.3,
+        engagementLevel: 0.2
+      }
     }
   });
-
-  const tabs = [
+const tabs = [
     { id: "profile", label: "Profile", icon: "User" },
     { id: "pipeline", label: "Pipeline", icon: "GitBranch" },
     { id: "notifications", label: "Notifications", icon: "Bell" },
-    { id: "preferences", label: "Preferences", icon: "Settings" }
+    { id: "preferences", label: "Preferences", icon: "Settings" },
+    { id: "leadScoring", label: "Lead Scoring", icon: "Target" }
   ];
 
   const handleSave = (section) => {
@@ -104,7 +143,221 @@ const Settings = () => {
         )
       }
     }));
+};
+
+  const handleRecalculateScores = async () => {
+    try {
+      await contactService.recalculateAllScores(settings.leadScoring);
+      toast.success('Lead scores recalculated successfully');
+    } catch (error) {
+      toast.error('Failed to recalculate scores');
+    }
   };
+
+  const updateScoringCriteria = (category, key, value) => {
+    setSettings(prev => ({
+      ...prev,
+      leadScoring: {
+        ...prev.leadScoring,
+        criteria: {
+          ...prev.leadScoring.criteria,
+          [category]: {
+            ...prev.leadScoring.criteria[category],
+            [key]: parseInt(value) || 0
+          }
+        }
+      }
+    }));
+  };
+
+  const updateScoringWeight = (category, value) => {
+    setSettings(prev => ({
+      ...prev,
+      leadScoring: {
+        ...prev.leadScoring,
+        weights: {
+          ...prev.leadScoring.weights,
+          [category]: parseFloat(value) || 0
+        }
+      }
+    }));
+  };
+
+  const renderLeadScoringTab = () => (
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900">Lead Scoring Configuration</h3>
+          <p className="text-sm text-gray-600 mt-1">
+            Configure scoring criteria and weights to automatically score your leads
+          </p>
+        </div>
+        <div className="flex items-center space-x-4">
+          <Button 
+            onClick={handleRecalculateScores}
+            variant="outline"
+            className="flex items-center space-x-2"
+          >
+            <ApperIcon name="RefreshCw" size={16} />
+            <span>Recalculate Scores</span>
+          </Button>
+        </div>
+      </div>
+
+      <Card className="p-6">
+        <h4 className="text-md font-semibold text-gray-900 mb-4">Company Size Scoring</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {Object.entries(settings.leadScoring.criteria.companySize).map(([size, points]) => (
+            <div key={size} className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700 capitalize">
+                {size}
+              </label>
+              <Input
+                type="number"
+                value={points}
+                onChange={(e) => updateScoringCriteria('companySize', size, e.target.value)}
+                className="w-full"
+                min="0"
+                max="100"
+              />
+            </div>
+          ))}
+        </div>
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Weight (0.0 - 1.0)
+          </label>
+          <Input
+            type="number"
+            value={settings.leadScoring.weights.companySize}
+            onChange={(e) => updateScoringWeight('companySize', e.target.value)}
+            className="w-32"
+            min="0"
+            max="1"
+            step="0.1"
+          />
+        </div>
+      </Card>
+
+      <Card className="p-6">
+        <h4 className="text-md font-semibold text-gray-900 mb-4">Contact Type Scoring</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {Object.entries(settings.leadScoring.criteria.contactType).map(([type, points]) => (
+            <div key={type} className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700 capitalize">
+                {type}
+              </label>
+              <Input
+                type="number"
+                value={points}
+                onChange={(e) => updateScoringCriteria('contactType', type, e.target.value)}
+                className="w-full"
+                min="0"
+                max="100"
+              />
+            </div>
+          ))}
+        </div>
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Weight (0.0 - 1.0)
+          </label>
+          <Input
+            type="number"
+            value={settings.leadScoring.weights.contactType}
+            onChange={(e) => updateScoringWeight('contactType', e.target.value)}
+            className="w-32"
+            min="0"
+            max="1"
+            step="0.1"
+          />
+        </div>
+      </Card>
+
+      <Card className="p-6">
+        <h4 className="text-md font-semibold text-gray-900 mb-4">Industry Scoring</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {Object.entries(settings.leadScoring.criteria.industry).map(([industry, points]) => (
+            <div key={industry} className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700 capitalize">
+                {industry}
+              </label>
+              <Input
+                type="number"
+                value={points}
+                onChange={(e) => updateScoringCriteria('industry', industry, e.target.value)}
+                className="w-full"
+                min="0"
+                max="100"
+              />
+            </div>
+          ))}
+        </div>
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Weight (0.0 - 1.0)
+          </label>
+          <Input
+            type="number"
+            value={settings.leadScoring.weights.industry}
+            onChange={(e) => updateScoringWeight('industry', e.target.value)}
+            className="w-32"
+            min="0"
+            max="1"
+            step="0.1"
+          />
+        </div>
+      </Card>
+
+      <Card className="p-6">
+        <h4 className="text-md font-semibold text-gray-900 mb-4">Engagement Level Scoring</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {Object.entries(settings.leadScoring.criteria.engagementLevel).map(([level, points]) => (
+            <div key={level} className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700 capitalize">
+                {level}
+              </label>
+              <Input
+                type="number"
+                value={points}
+                onChange={(e) => updateScoringCriteria('engagementLevel', level, e.target.value)}
+                className="w-full"
+                min="0"
+                max="100"
+              />
+            </div>
+          ))}
+        </div>
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Weight (0.0 - 1.0)
+          </label>
+          <Input
+            type="number"
+            value={settings.leadScoring.weights.engagementLevel}
+            onChange={(e) => updateScoringWeight('engagementLevel', e.target.value)}
+            className="w-32"
+            min="0"
+            max="1"
+            step="0.1"
+          />
+        </div>
+      </Card>
+
+      <Card className="p-6 bg-blue-50 border-blue-200">
+        <h4 className="text-md font-semibold text-blue-900 mb-2">Scoring Formula</h4>
+        <p className="text-sm text-blue-800">
+          Lead Score = (Company Size × {settings.leadScoring.weights.companySize}) + 
+          (Contact Type × {settings.leadScoring.weights.contactType}) + 
+          (Industry × {settings.leadScoring.weights.industry}) + 
+          (Engagement × {settings.leadScoring.weights.engagementLevel})
+        </p>
+        <p className="text-xs text-blue-700 mt-2">
+          Scores are automatically calculated when contacts are created or updated.
+        </p>
+      </Card>
+    </div>
+  );
 
   const renderProfileTab = () => (
     <Card className="p-6">
@@ -369,10 +622,11 @@ const Settings = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2 }}
       >
-        {activeTab === "profile" && renderProfileTab()}
+{activeTab === "profile" && renderProfileTab()}
         {activeTab === "pipeline" && renderPipelineTab()}
         {activeTab === "notifications" && renderNotificationsTab()}
         {activeTab === "preferences" && renderPreferencesTab()}
+        {activeTab === "leadScoring" && renderLeadScoringTab()}
       </motion.div>
 
       {/* Help Section */}

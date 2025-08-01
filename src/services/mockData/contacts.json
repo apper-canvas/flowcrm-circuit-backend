@@ -1,5 +1,5 @@
 [
-  {
+{
     "Id": 1,
     "name": "Sarah Johnson",
     "company": "TechStart Inc.",
@@ -7,11 +7,15 @@
     "phone": "+1 (555) 234-5678",
     "address": "123 Innovation Drive, San Francisco, CA 94105",
     "type": "lead",
+    "industry": "technology",
+    "companySize": "startup",
+    "engagementLevel": "high",
+    "leadScore": 68,
     "notes": "Interested in enterprise CRM solution. Has budget for Q1 implementation. Follow up on pricing proposal.",
     "createdAt": "2024-01-15T10:30:00Z",
     "updatedAt": "2024-01-20T14:45:00Z"
   },
-  {
+{
     "Id": 2,
     "name": "Michael Chen",
     "company": "Digital Solutions LLC",
@@ -19,11 +23,15 @@
     "phone": "+1 (555) 345-6789",
     "address": "456 Business Park, Austin, TX 78701",
     "type": "customer",
+    "industry": "technology",
+    "companySize": "medium",
+    "engagementLevel": "high",
+    "leadScore": 89,
     "notes": "Existing customer. Very satisfied with current service. Potential upsell opportunity for premium features.",
     "createdAt": "2023-11-08T09:15:00Z",
     "updatedAt": "2024-01-18T11:22:00Z"
   },
-  {
+{
     "Id": 3,
     "name": "Emily Rodriguez",
     "company": "Growth Marketing Co.",
@@ -31,11 +39,15 @@
     "phone": "+1 (555) 456-7890",
     "address": "789 Startup Boulevard, Denver, CO 80202",
     "type": "lead",
+    "industry": "technology",
+    "companySize": "small",
+    "engagementLevel": "medium",
+    "leadScore": 56,
     "notes": "Marketing agency looking for CRM integration with their existing tools. Needs demo of API capabilities.",
     "createdAt": "2024-01-22T16:20:00Z",
     "updatedAt": "2024-01-22T16:20:00Z"
   },
-  {
+{
     "Id": 4,
     "name": "David Wilson",
     "company": "Enterprise Corp",
@@ -43,11 +55,15 @@
     "phone": "+1 (555) 567-8901",
     "address": "321 Corporate Center, New York, NY 10001",
     "type": "partner",
+    "industry": "finance",
+    "companySize": "enterprise",
+    "engagementLevel": "high",
+    "leadScore": 95,
     "notes": "Strategic partner for enterprise implementations. Regular quarterly business reviews scheduled.",
     "createdAt": "2023-09-12T13:45:00Z",
     "updatedAt": "2024-01-10T10:30:00Z"
   },
-  {
+{
     "Id": 5,
     "name": "Lisa Thompson",
     "company": "Retail Solutions Inc.",
@@ -55,11 +71,15 @@
     "phone": "+1 (555) 678-9012",
     "address": "654 Commerce Street, Chicago, IL 60601",
     "type": "customer",
+    "industry": "retail",
+    "companySize": "medium",
+    "engagementLevel": "high",
+    "leadScore": 73,
     "notes": "Long-term customer since 2022. Considering expansion to additional locations. High satisfaction score.",
     "createdAt": "2022-06-05T08:00:00Z",
     "updatedAt": "2024-01-15T15:30:00Z"
   },
-  {
+{
     "Id": 6,
     "name": "Robert Kim",
     "company": "Innovation Labs",
@@ -67,11 +87,15 @@
     "phone": "+1 (555) 789-0123",
     "address": "987 Research Park, Seattle, WA 98101",
     "type": "lead",
+    "industry": "technology",
+    "companySize": "large",
+    "engagementLevel": "medium",
+    "leadScore": 76,
     "notes": "Research and development company. Interested in custom integrations. Technical decision maker.",
     "createdAt": "2024-01-25T12:15:00Z",
     "updatedAt": "2024-01-25T12:15:00Z"
   },
-  {
+{
     "Id": 7,
     "name": "Amanda Foster",
     "company": "Consulting Group LLC",
@@ -79,11 +103,15 @@
     "phone": "+1 (555) 890-1234",
     "address": "147 Professional Plaza, Boston, MA 02101",
     "type": "partner",
+    "industry": "other",
+    "companySize": "small",
+    "engagementLevel": "high",
+    "leadScore": 55,
     "notes": "Implementation partner specializing in small to medium businesses. Excellent track record.",
     "createdAt": "2023-12-01T14:00:00Z",
     "updatedAt": "2024-01-20T09:45:00Z"
   },
-  {
+{
     "Id": 8,
     "name": "James Martinez",
     "company": "Local Business Solutions",
@@ -91,6 +119,10 @@
     "phone": "+1 (555) 901-2345",
     "address": "258 Main Street, Phoenix, AZ 85001",
     "type": "customer",
+    "industry": "other",
+    "companySize": "small",
+    "engagementLevel": "low",
+    "leadScore": 44,
     "notes": "Small business owner. Started with basic plan, upgraded to professional. Very price-sensitive.",
     "createdAt": "2023-08-20T11:30:00Z",
     "updatedAt": "2024-01-12T16:20:00Z"
