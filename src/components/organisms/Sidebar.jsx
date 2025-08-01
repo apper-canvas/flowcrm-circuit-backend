@@ -3,13 +3,14 @@ import { motion } from "framer-motion";
 import ApperIcon from "@/components/ApperIcon";
 
 const Sidebar = () => {
-  const navigationItems = [
-    { name: "Dashboard", path: "/dashboard", icon: "BarChart3" },
-    { name: "Contacts", path: "/contacts", icon: "Users" },
-    { name: "Pipeline", path: "/pipeline", icon: "GitBranch" },
-    { name: "Activities", path: "/activities", icon: "Calendar" },
-    { name: "Settings", path: "/settings", icon: "Settings" }
-  ];
+const navigationItems = [
+{ name: "Dashboard", path: "/dashboard", icon: "BarChart3" },
+{ name: "Contacts", path: "/contacts", icon: "Users" },
+{ name: "Companies", path: "/companies", icon: "Building" },
+{ name: "Pipeline", path: "/pipeline", icon: "GitBranch" },
+{ name: "Activities", path: "/activities", icon: "Calendar" },
+{ name: "Settings", path: "/settings", icon: "Settings" }
+];
 
   return (
     <div className="fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 border-r border-gray-700 shadow-2xl z-40">

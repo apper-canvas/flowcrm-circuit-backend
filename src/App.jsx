@@ -7,6 +7,8 @@ import Layout from "@/components/Layout";
 import Dashboard from "@/components/pages/Dashboard";
 import Contacts from "@/components/pages/Contacts";
 import ContactDetail from "@/components/pages/ContactDetail";
+import Companies from "@/components/pages/Companies";
+import CompanyDetail from "@/components/pages/CompanyDetail";
 import Pipeline from "@/components/pages/Pipeline";
 import Activities from "@/components/pages/Activities";
 import Settings from "@/components/pages/Settings";
@@ -131,13 +133,15 @@ function AppContent() {
         <Route path="/reset-password/:appId/:fields" element={<ResetPassword />} />
         <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="contacts" element={<Contacts />} />
-          <Route path="contacts/:id" element={<ContactDetail />} />
-          <Route path="pipeline" element={<Pipeline />} />
-          <Route path="activities" element={<Activities />} />
-          <Route path="settings" element={<Settings />} />
-        </Route>
+<Route path="dashboard" element={<Dashboard />} />
+<Route path="contacts" element={<Contacts />} />
+<Route path="contacts/:id" element={<ContactDetail />} />
+<Route path="companies" element={<Companies />} />
+<Route path="companies/:id" element={<CompanyDetail />} />
+<Route path="pipeline" element={<Pipeline />} />
+<Route path="activities" element={<Activities />} />
+<Route path="settings" element={<Settings />} />
+</Route>
       </Routes>
       <ToastContainer
         position="top-right"
