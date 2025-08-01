@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
-import BulkEditModal from "@/components/organisms/BulkEditModal";
 import contactService from "@/services/api/contactService";
 import ApperIcon from "@/components/ApperIcon";
+import BulkEditModal from "@/components/organisms/BulkEditModal";
 import QuickAddModal from "@/components/organisms/QuickAddModal";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
@@ -302,13 +302,14 @@ if (error) return <Error onRetry={loadContacts} />;
                         onChange={() => handleSelectContact(contact.Id)}
                         className="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500 focus:ring-2"
                       />
-                      <div className="flex items-center space-x-3">
+<div className="flex items-center space-x-3">
                       <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center">
                         <ApperIcon name={getTypeIcon(contactType)} size={20} className="text-white" />
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">{contactName}</h3>
                         <p className="text-gray-600">{contactCompany}</p>
+                      </div>
                       </div>
                     </div>
                     <Badge variant={getTypeColor(contactType)} size="sm">
@@ -411,25 +412,24 @@ if (error) return <Error onRetry={loadContacts} />;
             </div>
             <div className="text-sm text-gray-600">Partners</div>
           </div>
-        </div>
+</div>
       </Card>
-    </div>
 
-{/* Quick Add Modal */}
-    <QuickAddModal 
-      isOpen={showQuickAdd} 
-      onClose={() => setShowQuickAdd(false)} 
-    />
+      {/* Quick Add Modal */}
+      <QuickAddModal 
+        isOpen={showQuickAdd} 
+        onClose={() => setShowQuickAdd(false)} 
+      />
 
-    {/* Bulk Edit Modal */}
-    <BulkEditModal
-      isOpen={showBulkEdit}
-      onClose={() => setShowBulkEdit(false)}
-      selectedRecords={selectedContacts}
-      recordType="contact"
-      onUpdateComplete={handleBulkUpdateComplete}
-    />
-  </>
+      {/* Bulk Edit Modal */}
+      <BulkEditModal
+        isOpen={showBulkEdit}
+        onClose={() => setShowBulkEdit(false)}
+        selectedContacts={selectedContacts}
+        recordType="contact"
+        onUpdateComplete={handleBulkUpdateComplete}
+      />
+    </>
   );
 };
 
