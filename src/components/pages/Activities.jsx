@@ -109,8 +109,11 @@ const Activities = () => {
     return colors[type] || "default";
   };
 
-  const getDateLabel = (date) => {
+const getDateLabel = (date) => {
+    if (!date) return "No Date";
     const activityDate = new Date(date);
+    if (isNaN(activityDate.getTime())) return "Invalid Date";
+    
     const today = startOfDay(new Date());
     
     if (isToday(activityDate)) return "Today";
@@ -119,13 +122,16 @@ const Activities = () => {
     return format(activityDate, "MMM dd, yyyy");
   };
 
-  const getStatusBadge = (activity) => {
+const getStatusBadge = (activity) => {
     if (activity.completed) {
       return <Badge variant="success" size="sm">Completed</Badge>;
     }
     
-    if (activity.dueDate && isPast(new Date(activity.dueDate))) {
-      return <Badge variant="error" size="sm">Overdue</Badge>;
+    if (activity.dueDate) {
+      const dueDate = new Date(activity.dueDate);
+      if (!isNaN(dueDate.getTime()) && isPast(dueDate)) {
+        return <Badge variant="error" size="sm">Overdue</Badge>;
+      }
     }
     
     return <Badge variant="warning" size="sm">Pending</Badge>;
@@ -148,16 +154,25 @@ const filteredActivities = activities
       
       return matchesSearch && matchesType && matchesStatus;
     })
-    .sort((a, b) => {
+.sort((a, b) => {
       if (a.completed !== b.completed) {
         return a.completed ? 1 : -1;
       }
       
       if (a.dueDate && b.dueDate) {
-        return new Date(a.dueDate) - new Date(b.dueDate);
+        const dateA = new Date(a.dueDate);
+        const dateB = new Date(b.dueDate);
+        if (!isNaN(dateA.getTime()) && !isNaN(dateB.getTime())) {
+          return dateA - dateB;
+        }
       }
       
-      return new Date(b.createdAt) - new Date(a.createdAt);
+      const createdA = new Date(a.createdAt);
+      const createdB = new Date(b.createdAt);
+      if (!isNaN(createdA.getTime()) && !isNaN(createdB.getTime())) {
+        return createdB - createdA;
+      }
+      return 0;
     });
 
   const groupedActivities = filteredActivities.reduce((groups, activity) => {
@@ -404,14 +419,24 @@ const filteredActivities = activities
 
                               <div className="flex items-center space-x-4 text-sm text-gray-500">
                                 {activity.dueDate && (
-                                  <div className="flex items-center space-x-1">
+<div className="flex items-center space-x-1">
                                     <ApperIcon name="Clock" size={14} />
-                                    <span>{format(new Date(activity.dueDate), "h:mm a")}</span>
+                                    <span>
+                                      {activity.dueDate && !isNaN(new Date(activity.dueDate).getTime()) 
+                                        ? format(new Date(activity.dueDate), "h:mm a")
+                                        : "No time set"
+                                      }
+                                    </span>
                                   </div>
                                 )}
-                                <div className="flex items-center space-x-1">
+<div className="flex items-center space-x-1">
                                   <ApperIcon name="Calendar" size={14} />
-                                  <span>Created {format(new Date(activity.createdAt), "MMM dd")}</span>
+                                  <span>
+                                    Created {activity.createdAt && !isNaN(new Date(activity.createdAt).getTime()) 
+                                      ? format(new Date(activity.createdAt), "MMM dd")
+                                      : "Unknown"
+                                    }
+                                  </span>
                                 </div>
                                 <Badge variant={getActivityColor(activity.type)} size="sm">
                                   {activity.type}
