@@ -131,12 +131,12 @@ const Activities = () => {
     return <Badge variant="warning" size="sm">Pending</Badge>;
   };
 
-  const filteredActivities = activities
+const filteredActivities = activities
     .filter(activity => {
       const matchesSearch = 
-        activity.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        activity.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        getContactName(activity.contactId).toLowerCase().includes(searchTerm.toLowerCase());
+        activity.title?.toLowerCase()?.includes(searchTerm.toLowerCase()) || false ||
+        activity.description?.toLowerCase()?.includes(searchTerm.toLowerCase()) || false ||
+        getContactName(activity.contactId)?.toLowerCase()?.includes(searchTerm.toLowerCase()) || false;
       
       const matchesType = filterType === "all" || activity.type === filterType;
       
