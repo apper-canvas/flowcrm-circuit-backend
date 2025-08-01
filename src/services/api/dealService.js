@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+import React from "react";
 
 class DealService {
   constructor() {
@@ -151,8 +152,10 @@ class DealService {
           });
         }
         
-        if (successfulRecords.length > 0) {
+if (successfulRecords.length > 0) {
           toast.success("Deal created successfully");
+          // Trigger UI refresh
+          window.dispatchEvent(new window.CustomEvent("dataUpdated"));
           return successfulRecords[0].data;
         }
       }
@@ -213,8 +216,10 @@ class DealService {
           });
         }
         
-        if (successfulUpdates.length > 0) {
+if (successfulUpdates.length > 0) {
           toast.success("Deal updated successfully");
+          // Trigger UI refresh
+          window.dispatchEvent(new window.CustomEvent("dataUpdated"));
           return successfulUpdates[0].data;
         }
       }
@@ -259,8 +264,10 @@ class DealService {
           });
         }
         
-        if (successfulDeletions.length > 0) {
+if (successfulDeletions.length > 0) {
           toast.success("Deal deleted successfully");
+          // Trigger UI refresh
+          window.dispatchEvent(new window.CustomEvent("dataUpdated"));
           return true;
         }
       }
